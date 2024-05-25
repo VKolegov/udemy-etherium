@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.4.5",
     "ganache-cli": "^6.12.2",
     "mocha": "^10.4.0",
     "solc": "^0.4.26",
