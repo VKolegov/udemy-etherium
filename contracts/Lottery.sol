@@ -23,14 +23,17 @@ contract Lottery {
         ));
     }
 
-    function pickWinner() public {
-
-        require(msg.sender == manager);
+    function pickWinner() public restricted {
 
         uint index = random() % players.length;
         address winner = address(players[index]);
         winner.transfer(address(this).balance);
 
         players = new address[](0);
+    }
+
+    modifier restricted() {
+        require(msg.sender == manager);
+        _;
     }
 }
