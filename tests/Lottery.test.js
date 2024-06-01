@@ -63,11 +63,30 @@ describe('Lottery', () => {
             await lottery.methods.enter().send({
                 from: accounts[0],
                 value: 50000, // wei
-            })
+            });
             assert(false);
         } catch (e) {
             // checking if error really occured
             assert(e);
         }
+
+        await lottery.methods.enter().send({
+            from: accounts[0],
+            value: web3.utils.toWei(minGweiToEnter.toString(), 'gwei'),
+        });
+
+        assert(true);
     });
+
+    it('only manager can call pickWinner', async () => {
+        try {
+            await lottery.methods.pickWinner().send({
+                from: accounts[2]
+            });
+
+            assert(false);
+        } catch (e) {
+            assert(e);
+        }
+    })
 });
