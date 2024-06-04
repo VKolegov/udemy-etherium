@@ -88,5 +88,48 @@ describe('Lottery', () => {
         } catch (e) {
             assert(e);
         }
-    })
+    });
+
+    it('sends money to the winner and resets the players array', async () => {
+        const account = accounts[5];
+
+        const ether = 1;
+
+        try {
+            await lottery.methods.enter().send({
+                from: account,
+                value: web3.utils.toWei(ether.toString(), 'ether'),
+            });
+
+            let players = await lottery.methods.getPlayers().call({
+                from: accounts[0],
+            });
+
+            assert.strictEqual(1, players.length);
+
+            const balanceBeforeLotteryPick = await web3.eth.getBalance(account);
+            await lottery.methods.pickWinner().send({
+                from: accounts[0],
+            });
+            const finalBalance = await web3.eth.getBalance(account);
+
+            const diff = finalBalance - balanceBeforeLotteryPick;
+            console.log(diff);
+
+            const gasApprox = web3.utils.toWei('0.01', 'ether');
+
+            assert(diff > web3.utils.toWei(ether.toString(), 'ether') - gasApprox);
+
+            players = await lottery.methods.getPlayers().call({
+                from: accounts[0],
+            });
+
+            assert.strictEqual(0, players.length);
+        } catch (e) {
+            console.error(e);
+            throw e;
+        }
+
+
+    });
 });
